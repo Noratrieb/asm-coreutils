@@ -1,37 +1,4 @@
-          global    _start
-
-NUMBER EQU 0
-
-          section   .data
-buffer:   times 8 db 0
-
-
-          section   .text
-_start:
-          mov       rax, NUMBER
-          mov       rbx, buffer
-          call      itoa
-          cmp       rax, 0
-          jnz       error
-
-write_buffer:
-          mov       rax, 1          ; write
-          mov       rdi, 1          ; stdout
-          mov       rsi, buffer
-          mov       rdx, rbx        ; the length
-          syscall
-
-graceful_exit:
-          xor       rdi, rdi
-          jmp       exit
-
-error:
-          mov       rdi, 1
-exit:
-          mov       rax, 60
-          syscall
-
-
+          global     itoa
 
 ; itoa - converts an unsigned integer into its ascii representation
 ; inputs:
@@ -41,9 +8,11 @@ exit:
 ;   rax - 0: success, 1: error
 ;   rbx - the length
 
-MAX_SIZE EQU 100000
+MAX_SIZE EQU 1000000000
 START_DIVISOR EQU MAX_SIZE / 10
 ASCII_NUM EQU 48
+
+          section   .text
 
 itoa:
 ; r12: whether we are in the leading zeroes (bool)
