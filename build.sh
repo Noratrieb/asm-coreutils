@@ -11,7 +11,7 @@ assemble () {
     echo "Assembling $PROGRAM_NAME"
   fi
 
-  nasm -g -F dwarf -f elf64 "$FILE" -o "./target/$PROGRAM_NAME.o" || return
+  nasm -g -F dwarf -f elf64 "$FILE" -o "./target/$PROGRAM_NAME.o"
 }
 
 build () {
@@ -29,7 +29,11 @@ build () {
       return
     fi
 
-    assemble "$FILE" "$PROGRAM_NAME"
+
+    if ! assemble "$FILE" "$PROGRAM_NAME"; then
+        echo "Errors assembling $PROGRAM_NAME"
+        return
+    fi
 
     if [ "$QUIET" = "false" ]; then
       echo "Linking $PROGRAM_NAME"

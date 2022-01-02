@@ -1,9 +1,10 @@
-          extern     println_num
           extern     open_file_arg
 
           global     _start
 
-IO_BUF_SIZE EQU 1024
+IO_BUF_SIZE  EQU 1024
+STDIN_FD     EQU 0
+STDOUT_FD    EQU 1
 
           section   .data
 file_not_found_msg:
@@ -11,6 +12,7 @@ file_not_found_msg:
 failed_to_read_msg:
           db        'Failed to read', 10, 15
 io_buf:   times IO_BUF_SIZE db 0
+newline:  db        10, 1
 
           section   .text
 _start:
@@ -31,32 +33,45 @@ _start:
           jmp       init
 
 stdin_init:
-          mov       rdi, 0                      ; stdin
+          mov       rdi, STDIN_FD
 
 init:
           ; the input fd is in rdi at this point
-          ; r13 is the character counter
           xor       r13, r13
 process:
+          ; read in from the file
           mov       rax, 0
           mov       rsi, io_buf
           mov       rdx, IO_BUF_SIZE
           syscall
 
+          ; test whether it is finished
+          cmp       rax, 0
+          jz        finish
+
           ; test whether there was an error
           cmp       rax, 0
           jl        failed_to_read
 
-          add       r13, rax
+          ; write to the file
+          mov       rdx, rax
+          mov       rax, 1
+          mov       rsi, io_buf
+          mov       rdi, STDOUT_FD
+          syscall
 
-          cmp       rax, 0
-          jnz       process
+          jmp       process
 
-count_and_print:
-          mov       rax, r13
-          call      println_num
+finish:
+          ; write a trailing newline
+          mov       rax, 1
+          mov       rdx, 1
+          mov       rsi, newline
+          mov       rdi, STDOUT_FD
+          syscall
+
+exit_success:
           xor       rdi, rdi
-
 exit:
           mov       rax, 60
           syscall
