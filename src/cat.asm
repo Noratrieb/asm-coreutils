@@ -1,5 +1,4 @@
           extern     open_file_arg
-          extern     println_num
 
           global     _start
 
@@ -48,9 +47,6 @@ process:
 
           cmp       rax, 0
           jz        finish
-
-          ; test whether there was an error
-          cmp       rax, 0
           jl        failed_to_read
 
           ; write to the file
