@@ -1,4 +1,5 @@
           extern     open_file_arg
+          extern     println_num
 
           global     _start
 
@@ -29,23 +30,22 @@ _start:
           cmp       rax, 0
           jl        file_not_found
 
-          mov       rdi, rax
+          mov       r12, rax
           jmp       init
 
 stdin_init:
-          mov       rdi, STDIN_FD
+          mov       r12, STDIN_FD
 
 init:
-          ; the input fd is in rdi at this point
-          xor       r13, r13
+          ; the input fd is in r12 at this point
 process:
           ; read in from the file
+          mov       rdi, r12
           mov       rax, 0
           mov       rsi, io_buf
           mov       rdx, IO_BUF_SIZE
           syscall
 
-          ; test whether it is finished
           cmp       rax, 0
           jz        finish
 
