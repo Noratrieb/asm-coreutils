@@ -3,7 +3,7 @@
 
           global     _start
 
-IO_BUF_SIZE  EQU 1024
+IO_BUF_SIZE  EQU 2048
 STDIN_FD     EQU 0
 STDOUT_FD    EQU 1
 

@@ -3,7 +3,7 @@
 
           global     _start
 
-IO_BUF_SIZE EQU 1024
+IO_BUF_SIZE EQU 2048
 
           section   .data
 file_not_found_msg:
