@@ -22,6 +22,9 @@ process:
 
           add       r13, rax
 
+          cmp       rax, 0
+          jnz       process
+
 count_and_print:
           mov       rax, r13
           call      println_num
