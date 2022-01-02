@@ -1,5 +1,14 @@
           global     itoa
           global     println_num
+          global     open_file_arg
+
+WRITE_SYSCALL  EQU 1
+OPEN_SYSCALL   EQU 2
+
+STDIN_FD       EQU 0
+STDOUT_FD      EQU 1
+
+
 
           section   .data
 print_num_buf: times 64 db 0
@@ -105,8 +114,36 @@ println_num:
           inc       rbx
 
           mov       rdx, rbx             ; len
-          mov       rax, 1               ; write
-          mov       rdi, 1               ; stdout
+          mov       rax, WRITE_SYSCALL
+          mov       rdi, STDOUT_FD
           mov       rsi, print_num_buf
+          syscall
+          ret
+
+
+; open_file_arg
+; opens the file, stdin if it's '-'
+; inputs:
+;   rax - filename
+; outputs:
+;   rax - fd, <0 if there was an error
+open_file_arg:
+          ; first, check whether the filename is -
+          cmp       byte [rax], '-'
+          jne       normal_filename
+          cmp       byte [rax + 1], 0
+          jne       normal_filename
+
+          ; filename is just minus
+          mov       rax, STDIN_FD
+          ret
+
+normal_filename:
+          ; we have a normal file that we must open
+
+          mov       rdi, rax
+          mov       rax, OPEN_SYSCALL
+          xor       rsi, rsi            ; no flags
+          xor       rdx, rdx            ; read-only mode
           syscall
           ret

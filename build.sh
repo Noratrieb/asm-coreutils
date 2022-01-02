@@ -1,3 +1,5 @@
+# no, I will not use make
+
 QUIET="false"
 CLEAN="false"
 
