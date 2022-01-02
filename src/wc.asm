@@ -1,20 +1,30 @@
           extern     itoa
+          extern     println_num
+
           global     _start
 
+IO_BUF_SIZE EQU 1024
+
           section   .data
-itoa_buf: times 100 db 0
+io_buf:   times IO_BUF_SIZE db 0
 
           section   .text
 _start:
-          mov       rax, 45354
-          mov       rbx, itoa_buf
-          call      itoa
+          ; r13 is the character counter
+          xor       r13, r13
 
-          mov       rdx, rbx
-          mov       rax, 1
-          mov       rdi, 1
-          mov       rsi, itoa_buf
+process:
+          mov       rax, 0
+          mov       rdi, 0              ; stdin
+          mov       rsi, io_buf
+          mov       rdx, IO_BUF_SIZE
           syscall
+
+          add       r13, rax
+
+count_and_print:
+          mov       rax, r13
+          call      println_num
 
           mov       rax, 60
           xor       rdi, rdi

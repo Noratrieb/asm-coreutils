@@ -1,4 +1,10 @@
           global     itoa
+          global     println_num
+
+          section   .data
+print_num_buf: times 64 db 0
+
+          section   .text
 
 ; itoa - converts an unsigned integer into its ascii representation
 ; inputs:
@@ -7,13 +13,9 @@
 ; outputs:
 ;   rax - 0: success, 1: error
 ;   rbx - the length
-
 MAX_SIZE EQU 1000000000
 START_DIVISOR EQU MAX_SIZE / 10
 ASCII_NUM EQU 48
-
-          section   .text
-
 itoa:
 ; r12: whether we are in the leading zeroes (bool)
 ; r11: buffer start
@@ -86,4 +88,25 @@ return_success:
 number_too_big:
           mov       rax, 1      ; return error code 1
           mov       rbx, 0      ; we've written nothing
+          ret
+
+ASCII_NEWLINE EQU 10
+
+; println_num
+; prints a number to stdout
+; inputs:
+;   rax - the number
+println_num:
+          mov       rbx, print_num_buf
+          call      itoa
+
+          ; add a trailing newline
+          mov       byte [print_num_buf + rbx], ASCII_NEWLINE
+          inc       rbx
+
+          mov       rdx, rbx             ; len
+          mov       rax, 1               ; write
+          mov       rdi, 1               ; stdout
+          mov       rsi, print_num_buf
+          syscall
           ret
